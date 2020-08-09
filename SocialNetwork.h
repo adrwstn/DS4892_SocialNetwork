@@ -8,18 +8,14 @@
 #include <random>
 #include <unordered_map>
 
-/**
- * A (rather crude!) representation of a social network.
- */
+/* A (rather crude!) representation of a social network.*/
 class SocialNetwork
 {
 public:
 	//! Add a new user to the social network.
 	User::ID addUser(std::string name); // key will be generated from name
 
-	/**
-	 * Add a (bidirectional/undirected) friendship link between two users.
-	 *
+	/* Add a (bidirectional/undirected) friendship link between two users.
 	 * @pre the named users actually exist in the social network
 	 */
 	SocialNetwork& addFriendship(User::ID user1_ID, User::ID user2_ID);
@@ -38,12 +34,10 @@ public:
 
 		bool operator!=(const Iterator& otherUser) const;
 
-		std::pair<User::ID,User> iter_;
-		std::vector<std::pair<User::ID,User>> sameNames;
-		const std::unordered_map<User::ID,User> networkCopy_;
-		// const std::unordered_map<User::ID,User>::const_iterator itr_ ;
-		
-		Iterator(std::unordered_map<User::ID,User> network);
+		std::vector<User*> vec_users;
+		std::vector<User*>::iterator itr_;
+
+		Iterator(std::vector<User*> users);
 
 	};
 
@@ -58,8 +52,9 @@ public:
 
 	std::tuple<std::string, std::string> parseName(std::string name);
 
+	SocialNetwork();
 private:
-	std::unordered_map<User::ID, User> users_;
+	std::unordered_map<User::ID, std::shared_ptr<User>> users_;
 
 	/*Random number generator to create 3-digit ID between 100-999*/
 	std::mt19937 generator;

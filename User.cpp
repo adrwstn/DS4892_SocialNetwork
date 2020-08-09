@@ -12,29 +12,63 @@ ID User::id() const
 //! How many friends does this user have?
 size_t User::degree() const
 {
-	return myFriends.size();
+	return myFriends_.size();
 }
 
-/**
- * What is the shortest path to the given User from this one?
+/* What is the shortest path to the given User from this one?
  * @returns   the number of friend links between this User and that
  *            one, or SIZE_MAX if there is no connection between them
  */
-size_t User::distance(const User&) const    //TODO! implement
+size_t User::distance(const User& findU) const
 {
-	// return 0;
+#define ever (;;)
+	size_t distance = 0;
+	std::set<User> users_allDegrees;
+	std::set<User> users_currentDeg;
+	users_currentDeg.insert(*this);
+
+	for ever
+	{
+		size_t sizebefore = users_allDegrees.size();
+		for (auto u : users_currentDeg)
+		{
+			if (u.id() == findU.id())
+				return distance;
+			else users_allDegrees.insert(u);
+		}
+		std::set<User> tmp = users_currentDeg;
+		for (auto u : tmp)
+		{
+			for (auto f : u.myFriends_)
+			{
+				users_currentDeg.insert(f);
+			}
+			users_currentDeg.erase(u);
+		}
+		size_t sizeafter = users_allDegrees.size();
+		if (sizebefore == sizeafter)
+			return SIZE_MAX;
+		distance++;
+	}
 }
 
 
-User::FriendIterator User::begin() const    //TODO! implement
+User::FriendIterator User::begin() const
 {
-	// return User::FriendIterator();
+	std::vector<User *> handoff;
+	for (auto u : myFriends_)
+	{
+		handoff.push_back(&u);
+	}
+
+	FriendIterator friends(handoff);
+	return friends;
 }
 
 //! Make this User friends with another User.
-void User::addFriend(const User& myfriend)  //TODO! implement
+void User::addFriend(const User& myfriend)
 {
-	// myFriends.emplace_back(id);
+	myFriends_.emplace(myfriend);
 }
 
 /**
@@ -48,13 +82,39 @@ void User::addFriend(const User& myfriend)  //TODO! implement
 */
 User::FriendIterator User::friendsOfFriends() const //TODO! implement
 {
-	// return User::FriendIterator();
+	std::set<User> friendsoffriends;
+	std::vector<User *> vec_friendsoffriends;
+
+	for (auto f : myFriends_)
+	{
+		friendsoffriends.insert(f);
+
+		for (auto fof : f.myFriends_)
+		{
+			if (fof.id() != id_)
+				friendsoffriends.insert(fof);
+		}
+	}
+	for (auto fof : friendsoffriends)
+	{
+		vec_friendsoffriends.push_back(&fof);
+	}
+	FriendIterator fof(vec_friendsoffriends);
+	return fof;
 }
 
 //! Get an iterator that signifies the end of any friend iteration.
-User::FriendIterator User::end() const  //TODO! implement
+User::FriendIterator User::end() const
 {
-	// return User::FriendIterator();
+	std::vector<User *> handoff;
+	for (auto u : myFriends_)
+	{
+		handoff.push_back(&u);
+	}
+
+	FriendIterator friends(handoff);
+	friends.friendItr_ = friends.friends_.end();
+	return friends;
 }
 
 std::string& User::getLastName()
@@ -72,34 +132,40 @@ User::User(ID id, std::string& lastName, std::string& firstName)
 	: id_(id), lastName_(lastName), firstName_(firstName)
 {}
 
+std::string User::getName()
+{
+	std::string fullName = firstName_ + ' ' + lastName_;
+	return fullName;
+}
+
 
 // Struct FriendIterator methods
 
 User& User::FriendIterator::operator*()
 {
-
-	// return this->friendItr_;
+	return **friendItr_;
 }
 
 User::FriendIterator User::FriendIterator::operator++(int)
 {
-	this->friendItr_ = this->friendItr_++;
+	friendItr_++;
 	return *this;
 }
 
 bool User::FriendIterator::operator==(const User::FriendIterator& otherUser) const
 {
-	return this->friendItr_ == otherUser.friendItr_;
+	return friendItr_ == otherUser.friendItr_;
 }
 
 bool User::FriendIterator::operator!=(const User::FriendIterator& otherUser) const
 {
-	return this->friendItr_ != otherUser.friendItr_;
+	return friendItr_ != otherUser.friendItr_;
 }
 
-User::FriendIterator::FriendIterator(std::set<User> friends)
+User::FriendIterator::FriendIterator(std::vector<User *> friends)
 	: friends_(friends), friendItr_(friends_.begin())
 {}
+
 
 
 

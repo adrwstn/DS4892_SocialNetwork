@@ -5,6 +5,7 @@
 #include <memory>       // std::unique_ptr
 #include <string>
 #include <set>
+#include <vector>
 // #include <iterator>
 
 /**
@@ -21,13 +22,11 @@ public:
 	//! How many friends does this user have?
 	size_t degree() const;
 
-	/**
-	 * What is the shortest path to the given User from this one?
-	 *
+	/* What is the shortest path to the given User from this one?
 	 * @returns   the number of friend links between this User and that
 	 *            one, or SIZE_MAX if there is no connection between them
 	 */
-	size_t distance(const User&) const;
+	size_t distance(const User& findU) const;
 
 	//! Make this User friends with another User.
 	void addFriend(const User& myfriend);
@@ -43,10 +42,10 @@ public:
 
 		bool operator!=(const FriendIterator& otherUser) const;
 
-		FriendIterator(std::set<User> friends);
+		FriendIterator(std::vector<User*> friends);
 
-		std::set<User> friends_;
-		std::set<User>::iterator friendItr_;
+		std::vector<User*> friends_;
+		std::vector<User*>::iterator friendItr_;
 
 	};
 
@@ -72,6 +71,9 @@ public:
 
 	std::string& getFirstName();
 
+	std::string getName();
+
+
 	User(ID id, std::string& lastName, std::string& firstName);
 
 	bool operator<(const User& rhs) const
@@ -83,7 +85,7 @@ private:
 	ID id_;
 	std::string lastName_;
 	std::string firstName_;
-	std::set<User> myFriends;
+	std::set<User> myFriends_;
 
 };
 

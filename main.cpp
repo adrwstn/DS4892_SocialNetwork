@@ -8,13 +8,20 @@ int main()
 	SocialNetwork SN;
 	// SN.isGroupEmpty() ? std::cout<<"Table is empty!"<<std::endl : std::cout<<"Table is NOT empty"<<std::endl;
 	// SN.addUser("Andrew Stone");
-	// SN.isGroupEmpty() ? std::cout<<"Table is empty!"<<std::endl : std::cout<<"Table is NOT empty"<<std::endl;
 	SN.addUser("andrew stone");
-	// auto u = SN.find("andrew Stone");
-	// std::cout << &u << std::endl;
-	auto a = SN.begin();
+	SN.addUser("john stone");
+	SN.addUser("tim stone");
 
-	std::cout << "--END--"<< std::endl;
+	auto u = SN.find("andrew Stone");
+
+	auto a = SN.begin();
+	auto b = SN.end();
+	auto c = SN.find("andrew stone");
+
+
+
+
+	std::cout << "--END--" << std::endl;
 	return 0;
 }
 
