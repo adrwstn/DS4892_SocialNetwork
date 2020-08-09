@@ -38,20 +38,20 @@ SocialNetwork::Iterator SocialNetwork::find(std::string name)
 
 SocialNetwork::Iterator SocialNetwork::begin()
 {
-	std::vector<User*> handoff;
+	std::vector<User *> handoff;
 	for (auto u : users_)
 	{
-		handoff.push_back(u.second.get() );
+		handoff.push_back(u.second.get());
 	}
 
 	Iterator users(handoff);
-	users.itr_=users.vec_users.begin();
+	users.itr_ = users.vec_users.begin();
 	return users;
 }
 
 SocialNetwork::Iterator SocialNetwork::end()
 {
-	std::vector<User*> handoff;
+	std::vector<User *> handoff;
 	for (auto u : users_)
 	{
 		handoff.push_back(u.second.get());
@@ -70,9 +70,9 @@ User& SocialNetwork::Iterator::operator*()
 
 SocialNetwork::Iterator SocialNetwork::Iterator::operator++(int)
 {
-	this->itr_ = std::next(itr_);
+	// this->itr_ =std::next(itr_);
 	// std::next(itr_);
-	// itr_++;
+	 itr_++;
 	return *this;
 }
 
@@ -84,11 +84,20 @@ bool SocialNetwork::Iterator::operator==(const SocialNetwork::Iterator& otherUse
 bool SocialNetwork::Iterator::operator!=(const SocialNetwork::Iterator& otherUser) const
 {
 	// return (*itr_)->id() != ((*(otherUser.itr_))->id());
-	return (*itr_) != *(otherUser.itr_);
+	// return &itr_ != &otherUser.itr_;
+	if (itr_ == vec_users.end() && otherUser.itr_ == otherUser.vec_users.end())
+	{
+		return false;
+	}
+	if (itr_ == vec_users.end() || otherUser.itr_ == otherUser.vec_users.end())
+	{
+		return true;
+	}
+	return *(itr_) != *(otherUser.itr_);
 
 }
 
-SocialNetwork::Iterator::Iterator(std::vector<User*> users)
+SocialNetwork::Iterator::Iterator(std::vector<User *> users)
 	: vec_users(users)
 {}
 

@@ -47,7 +47,9 @@ size_t User::distance(const User& findU) const
 		}
 		size_t sizeafter = users_allDegrees.size();
 		if (sizebefore == sizeafter)
+		{
 			return SIZE_MAX;
+		}
 		distance++;
 	}
 }
