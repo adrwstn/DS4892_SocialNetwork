@@ -67,14 +67,10 @@ public:
 	FriendIterator end() const;
 
 
-	std::string& getLastName();
-
-	std::string& getFirstName();
-
-	std::string getName();
+	std::string& getName();
 
 
-	User(ID id, std::string& lastName, std::string& firstName);
+	User(ID id, std::string& name);
 
 	bool operator<(const User& rhs) const
 	{
@@ -83,8 +79,9 @@ public:
 
 private:
 	ID id_;
-	std::string lastName_;
-	std::string firstName_;
+	std::string name_;
+	// std::string lastName_;
+	// std::string firstName_;
 	std::set<User> myFriends_;
 
 };

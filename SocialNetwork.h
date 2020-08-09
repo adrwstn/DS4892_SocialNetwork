@@ -50,8 +50,6 @@ public:
 	//! Get an iterator that signifies the end of any user iteration.
 	Iterator end();
 
-	std::tuple<std::string, std::string> parseName(std::string name);
-
 	SocialNetwork();
 private:
 	std::unordered_map<User::ID, std::shared_ptr<User>> users_;

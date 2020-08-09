@@ -6,7 +6,7 @@ using ID = size_t;
 //! What is this user's ID?
 ID User::id() const
 {
-	return id_;
+	return this->id_;
 }
 
 //! How many friends does this user have?
@@ -80,7 +80,7 @@ void User::addFriend(const User& myfriend)
 * centre of the egonet) should not show up in the iteration, and no
 * single user should be iterated over more than once.
 */
-User::FriendIterator User::friendsOfFriends() const //TODO! implement
+User::FriendIterator User::friendsOfFriends() const
 {
 	std::set<User> friendsoffriends;
 	std::vector<User *> vec_friendsoffriends;
@@ -95,6 +95,7 @@ User::FriendIterator User::friendsOfFriends() const //TODO! implement
 				friendsoffriends.insert(fof);
 		}
 	}
+	vec_friendsoffriends.reserve(friendsoffriends.size());
 	for (auto fof : friendsoffriends)
 	{
 		vec_friendsoffriends.push_back(&fof);
@@ -117,25 +118,13 @@ User::FriendIterator User::end() const
 	return friends;
 }
 
-std::string& User::getLastName()
-{
-	return lastName_;
-}
-
-std::string& User::getFirstName()
-{
-	return firstName_;
-}
-
-
-User::User(ID id, std::string& lastName, std::string& firstName)
-	: id_(id), lastName_(lastName), firstName_(firstName)
+User::User(ID id, std::string& name)
+	: id_(id), name_(name)
 {}
 
-std::string User::getName()
+std::string& User::getName()
 {
-	std::string fullName = firstName_ + ' ' + lastName_;
-	return fullName;
+	return name_;
 }
 
 

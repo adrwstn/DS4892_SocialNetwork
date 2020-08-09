@@ -6,9 +6,8 @@
 User::ID SocialNetwork::addUser(std::string name)
 {
 	User::ID genID = genRandomID();
-	auto parsedName = std::tuple(parseName(name));
 
-	std::shared_ptr<User> newUser = std::make_shared<User>(genID, std::get<1>(parsedName), std::get<0>(parsedName));
+	std::shared_ptr<User> newUser = std::make_shared<User>(genID, name);
 	users_[genID] = newUser;
 	return newUser->id();
 }
@@ -17,7 +16,7 @@ SocialNetwork& SocialNetwork::addFriendship(User::ID user1_ID, User::ID user2_ID
 {
 	getUser(user1_ID).addFriend(getUser(user2_ID));
 	getUser(user2_ID).addFriend(getUser(user1_ID));
-	return  *this;
+	return *this;
 }
 
 User& SocialNetwork::getUser(User::ID id)
@@ -39,19 +38,20 @@ SocialNetwork::Iterator SocialNetwork::find(std::string name)
 
 SocialNetwork::Iterator SocialNetwork::begin()
 {
-	std::vector<User *> handoff;
+	std::vector<User*> handoff;
 	for (auto u : users_)
 	{
 		handoff.push_back(u.second.get());
 	}
 
 	Iterator users(handoff);
+	users.itr_=users.vec_users.begin();
 	return users;
 }
 
 SocialNetwork::Iterator SocialNetwork::end()
 {
-	std::vector<User *> handoff;
+	std::vector<User*> handoff;
 	for (auto u : users_)
 	{
 		handoff.push_back(u.second.get());
@@ -70,7 +70,9 @@ User& SocialNetwork::Iterator::operator*()
 
 SocialNetwork::Iterator SocialNetwork::Iterator::operator++(int)
 {
-	itr_++;
+	this->itr_ = std::next(itr_);
+	// std::next(itr_);
+	// itr_++;
 	return *this;
 }
 
@@ -81,25 +83,14 @@ bool SocialNetwork::Iterator::operator==(const SocialNetwork::Iterator& otherUse
 
 bool SocialNetwork::Iterator::operator!=(const SocialNetwork::Iterator& otherUser) const
 {
-	return (*itr_)->id() != (*(otherUser.itr_))->id();
+	// return (*itr_)->id() != ((*(otherUser.itr_))->id());
+	return (*itr_) != *(otherUser.itr_);
+
 }
 
-SocialNetwork::Iterator::Iterator(std::vector<User *> users)
-	: vec_users(std::move(users)), itr_(vec_users.begin())
+SocialNetwork::Iterator::Iterator(std::vector<User*> users)
+	: vec_users(users)
 {}
-
-
-std::tuple<std::string, std::string> SocialNetwork::parseName(std::string name)
-{
-	std::vector<std::string> nameTokens;
-	std::stringstream str(name);
-	std::string immediate;
-	while (getline(str, immediate, ' '))
-	{
-		nameTokens.push_back(immediate);
-	}
-	return std::tuple<std::string, std::string>(nameTokens[0], nameTokens[1]);
-}
 
 User::ID SocialNetwork::genRandomID()
 {
