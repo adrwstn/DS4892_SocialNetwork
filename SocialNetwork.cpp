@@ -41,7 +41,7 @@ SocialNetwork::Iterator SocialNetwork::begin()
 	std::vector<User*> handoff;
 	for (auto u : users_)
 	{
-		handoff.push_back(u.second.get());
+		handoff.push_back(u.second.get() );
 	}
 
 	Iterator users(handoff);
