@@ -2,11 +2,11 @@
 #define USER_H_
 
 #include <cstddef>      // for definition of size_t
-#include <memory>       // std::unique_ptr
+// #include <memory>       // std::unique_ptr
 #include <string>
 #include <set>
 #include <vector>
-// #include <iterator>
+#include <iterator>
 
 /**
  * Representation of a social network user.
@@ -42,10 +42,10 @@ public:
 
 		bool operator!=(const FriendIterator& otherUser) const;
 
-		FriendIterator(std::vector<User*> friends);
+		FriendIterator(std::vector<User> friends);
 
-		std::vector<User*> friends_;
-		std::vector<User*>::iterator friendItr_;
+		std::vector<User> friends_;
+		std::vector<User>::iterator friendItr_;
 
 	};
 
@@ -71,6 +71,7 @@ public:
 
 
 	User(ID id, std::string& name);
+
 
 	bool operator<(const User& rhs) const
 	{

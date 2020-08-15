@@ -57,10 +57,10 @@ size_t User::distance(const User& findU) const
 
 User::FriendIterator User::begin() const
 {
-	std::vector<User *> handoff;
+	std::vector<User> handoff;
 	for (auto u : myFriends_)
 	{
-		handoff.push_back(&u);
+		handoff.push_back(u);
 	}
 
 	FriendIterator friends(handoff);
@@ -85,7 +85,7 @@ void User::addFriend(const User& myfriend)
 User::FriendIterator User::friendsOfFriends() const
 {
 	std::set<User> friendsoffriends;
-	std::vector<User *> vec_friendsoffriends;
+	std::vector<User> vec_friendsoffriends;
 
 	for (auto f : myFriends_)
 	{
@@ -100,7 +100,7 @@ User::FriendIterator User::friendsOfFriends() const
 	vec_friendsoffriends.reserve(friendsoffriends.size());
 	for (auto fof : friendsoffriends)
 	{
-		vec_friendsoffriends.push_back(&fof);
+		vec_friendsoffriends.push_back(fof);
 	}
 	FriendIterator fof(vec_friendsoffriends);
 	return fof;
@@ -109,10 +109,10 @@ User::FriendIterator User::friendsOfFriends() const
 //! Get an iterator that signifies the end of any friend iteration.
 User::FriendIterator User::end() const
 {
-	std::vector<User *> handoff;
+	std::vector<User> handoff;
 	for (auto u : myFriends_)
 	{
-		handoff.push_back(&u);
+		handoff.push_back(u);
 	}
 
 	FriendIterator friends(handoff);
@@ -124,6 +124,10 @@ User::User(ID id, std::string& name)
 	: id_(id), name_(name)
 {}
 
+/*User::User(ID id, std::string& name)
+	: id_(id), name_(name), myFriends_(std::set<User>())
+{}*/
+
 std::string& User::getName()
 {
 	return name_;
@@ -134,7 +138,7 @@ std::string& User::getName()
 
 User& User::FriendIterator::operator*()
 {
-	return **friendItr_;
+	return *friendItr_;
 }
 
 User::FriendIterator User::FriendIterator::operator++(int)
@@ -153,7 +157,7 @@ bool User::FriendIterator::operator!=(const User::FriendIterator& otherUser) con
 	return friendItr_ != otherUser.friendItr_;
 }
 
-User::FriendIterator::FriendIterator(std::vector<User *> friends)
+User::FriendIterator::FriendIterator(std::vector<User> friends)
 	: friends_(friends), friendItr_(friends_.begin())
 {}
 

@@ -1,15 +1,15 @@
 // SocialNetwork source file
 #include "SocialNetwork.h"
 
-#include <utility>
+// #include <utility>
+
 
 User::ID SocialNetwork::addUser(std::string name)
 {
 	User::ID genID = genRandomID();
-
-	std::shared_ptr<User> newUser = std::make_shared<User>(genID, name);
-	users_[genID] = newUser;
-	return newUser->id();
+	User newUser(genID, name);
+	users_.insert({genID, newUser});
+	return newUser.id();
 }
 
 SocialNetwork& SocialNetwork::addFriendship(User::ID user1_ID, User::ID user2_ID)
@@ -21,16 +21,17 @@ SocialNetwork& SocialNetwork::addFriendship(User::ID user1_ID, User::ID user2_ID
 
 User& SocialNetwork::getUser(User::ID id)
 {
-	return *users_[id];
+	// return users_[id];
+	return users_.at(id);
 }
 
 SocialNetwork::Iterator SocialNetwork::find(std::string name)
 {
-	std::vector<User *> sameName;
+	std::vector<User> sameName;
 	for (auto u: users_)
 	{
-		if (u.second->getName().rfind(name) == 0)
-			sameName.push_back(u.second.get());
+		if (u.second.getName().rfind(name) == 0 || name.empty())
+			sameName.push_back(u.second);
 	}
 	Iterator same(sameName);
 	return same;
@@ -38,10 +39,11 @@ SocialNetwork::Iterator SocialNetwork::find(std::string name)
 
 SocialNetwork::Iterator SocialNetwork::begin()
 {
-	std::vector<User *> handoff;
+	std::vector<User> handoff;
 	for (auto u : users_)
 	{
-		handoff.push_back(u.second.get());
+		handoff.push_back(u.second);
+		// handoff.emplace_back(u.second);
 	}
 
 	Iterator users(handoff);
@@ -51,10 +53,11 @@ SocialNetwork::Iterator SocialNetwork::begin()
 
 SocialNetwork::Iterator SocialNetwork::end()
 {
-	std::vector<User *> handoff;
+	std::vector<User> handoff;
 	for (auto u : users_)
 	{
-		handoff.push_back(u.second.get());
+		handoff.push_back(u.second);
+		// handoff.emplace_back(u.second);
 	}
 
 	Iterator users(handoff);
@@ -65,26 +68,44 @@ SocialNetwork::Iterator SocialNetwork::end()
 
 User& SocialNetwork::Iterator::operator*()
 {
-	return **itr_;
+	return *itr_;
 }
 
 SocialNetwork::Iterator SocialNetwork::Iterator::operator++(int)
 {
 	// this->itr_ =std::next(itr_);
 	// std::next(itr_);
-	 itr_++;
+
+	// itr_++;
+	// return *this;
+
+	if (itr_ == vec_users.end())
+		return *this;
+	itr_++;
 	return *this;
+}
+
+SocialNetwork::Iterator SocialNetwork::Iterator::operator++()
+{
+	if (itr_ == vec_users.end())
+		return *this;
+	++itr_;
+	return *this;
+
 }
 
 bool SocialNetwork::Iterator::operator==(const SocialNetwork::Iterator& otherUser) const
 {
-	return (*itr_)->id() == (*(otherUser.itr_))->id();
+	//(*itr_)->id() == (*(otherUser.itr_))->id();
+	// return !(*this != otherUser);
+	return itr_->id() == otherUser.itr_->id();
 }
 
 bool SocialNetwork::Iterator::operator!=(const SocialNetwork::Iterator& otherUser) const
 {
 	// return (*itr_)->id() != ((*(otherUser.itr_))->id());
 	// return &itr_ != &otherUser.itr_;
+
 	if (itr_ == vec_users.end() && otherUser.itr_ == otherUser.vec_users.end())
 	{
 		return false;
@@ -93,13 +114,13 @@ bool SocialNetwork::Iterator::operator!=(const SocialNetwork::Iterator& otherUse
 	{
 		return true;
 	}
-	return *(itr_) != *(otherUser.itr_);
-
+	return itr_->id() != otherUser.itr_->id();
 }
 
-SocialNetwork::Iterator::Iterator(std::vector<User *> users)
-	: vec_users(users)
+SocialNetwork::Iterator::Iterator(std::vector<User> users)
+	: vec_users(users), itr_(vec_users.begin())
 {}
+
 
 User::ID SocialNetwork::genRandomID()
 {
@@ -110,4 +131,5 @@ User::ID SocialNetwork::genRandomID()
 
 SocialNetwork::SocialNetwork()
 {}
+// : users_(std::unordered_map<User::ID, User>().empty())
 
